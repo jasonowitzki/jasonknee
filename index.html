@@ -193,7 +193,63 @@ async function tryAutoSync(){
 }
 
 window.addEventListener('online', tryAutoSync);
-$('#syncNowBtn').addEventListener('click', tryAutoSync);
+$('#syncNowBtn').addEventListener('click', async () => {
+  $('#syncStatus').textContent = 'syncing...';
+  const settings = loadJSON(LS_KEYS.SETTINGS, {});
+  const apiUrl = settings.apiUrl;
+  const secret = settings.secret;
+  const queue = loadJSON(LS_KEYS.QUEUE, []);
+  
+  if(!navigator.onLine){
+    $('#syncStatus').textContent = 'offline';
+    alert('You are offline. Cannot sync.');
+    return;
+  }
+  
+  if(!apiUrl || queue.length===0){
+    $('#syncStatus').textContent = 'idle';
+    alert('Nothing to sync or API URL missing.');
+    return;
+  }
+
+  let successCount = 0;
+  let failCount = 0;
+
+  for(const item of queue.slice()){
+    try{
+      const resp = await fetch(apiUrl, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ secret: secret, payload: item })
+      });
+      
+      const result = await resp.json();
+      if(result.status==='success'){
+        successCount++;
+        // mark as synced in logs
+        const logs = loadJSON(LS_KEYS.LOGS, []);
+        const found = logs.find(l=>l.id===item.id);
+        if(found) found.synced = true;
+        saveJSON(LS_KEYS.LOGS, logs);
+        // remove from queue
+        let q = loadJSON(LS_KEYS.QUEUE, []);
+        q = q.filter(x=>x.id !== item.id);
+        saveJSON(LS_KEYS.QUEUE, q);
+      } else {
+        failCount++;
+        console.warn('sync failed', result.message);
+      }
+    }catch(err){
+      failCount++;
+      console.warn('sync error', err);
+    }
+  }
+
+  $('#syncStatus').textContent = `Done. Success: ${successCount}, Fail: ${failCount}`;
+  renderTimeline();
+  if(failCount>0) alert('Some items failed to sync. Check console.');
+});
+
 
 /* =========================
    UI Tabs
@@ -443,3 +499,4 @@ window.tryAutoSync = tryAutoSync;
 </script>
 </body>
 </html>
+
