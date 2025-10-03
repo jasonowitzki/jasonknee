@@ -135,24 +135,46 @@ if(!loadJSON(LS_KEYS.SETTINGS, null)) saveJSON(LS_KEYS.SETTINGS,{apiUrl:'',secre
 // ================= SYNC =================
 let syncing=false;
 async function tryAutoSync(){
-  const st=loadJSON(LS_KEYS.SETTINGS,{});
-  const apiUrl=st.apiUrl, secret=st.secret;
-  const queue=loadJSON(LS_KEYS.QUEUE,[]);
-  if(!navigator.onLine||!apiUrl||queue.length===0||syncing) return;
-  syncing=true; $('#syncStatus').textContent='syncing...';
+  const st = loadJSON(LS_KEYS.SETTINGS,{});
+  const apiUrl = st.apiUrl, secret = st.secret;
+  const queue = loadJSON(LS_KEYS.QUEUE,[]);
+
+  if(!navigator.onLine || !apiUrl || queue.length===0 || syncing) return;
+
+  syncing = true;
+  $('#syncStatus').textContent = 'syncing...';
+
   for(const item of queue.slice()){
     try{
-      const resp=await fetch(apiUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret,payload:item})});
-      if(resp.ok){
-        const logs=loadJSON(LS_KEYS.LOGS,[]);
-        const found=logs.find(l=>l.id===item.id);
-        if(found) found.synced=true;
-        saveJSON(LS_KEYS.LOGS,logs);
-        let q=loadJSON(LS_KEYS.QUEUE,[]); q=q.filter(x=>x.id!==item.id); saveJSON(LS_KEYS.QUEUE,q);
+      const resp = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({secret, payload:item})
+      });
+
+      if(!resp.ok){
+        console.warn('Sync failed, server returned', resp.status);
+        continue;
       }
-    }catch(e){break;}
+
+      const logs = loadJSON(LS_KEYS.LOGS,[]);
+      const found = logs.find(l => l.id === item.id);
+      if(found) found.synced = true;
+      saveJSON(LS_KEYS.LOGS,logs);
+
+      let q = loadJSON(LS_KEYS.QUEUE,[]);
+      q = q.filter(x => x.id !== item.id);
+      saveJSON(LS_KEYS.QUEUE,q);
+
+    } catch(e){
+      console.warn('Sync error (likely CORS or network):', e);
+      break;
+    }
   }
-  syncing=false; $('#syncStatus').textContent='idle'; renderTimeline();
+
+  syncing = false;
+  $('#syncStatus').textContent = 'idle';
+  renderTimeline();
 }
 $('#syncNowBtn').addEventListener('click',tryAutoSync);
 window.addEventListener('online',tryAutoSync);
@@ -185,10 +207,7 @@ function startBtnEnable(enabled){$('#startBtn').disabled=!enabled; $('#markBtn')
 function startExercise(){
   const ex=EXERCISES[currentIndex]; exTimeLeft=ex.hold; $('#ex-timer').textContent=exTimeLeft+'s'; startBtnEnable(false); exerciseActive=true;
   if(exTimer) clearInterval(exTimer);
-  exTimer=setInterval(()=>{
-    if(!exerciseActive) return; exTimeLeft--; $('#ex-timer').textContent=exTimeLeft>0?exTimeLeft+'s':'Done!';
-    if(exTimeLeft<=0){clearInterval(exTimer);exerciseActive=false; onExerciseComplete();}
-  },1000);
+  exTimer=setInterval(()=>{if(!exerciseActive) return; exTimeLeft--; $('#ex-timer').textContent=exTimeLeft>0?exTimeLeft+'s':'Done!'; if(exTimeLeft<=0){clearInterval(exTimer);exerciseActive=false; onExerciseComplete();}},1000);
 }
 $('#startBtn').addEventListener('click',startExercise);
 $('#markBtn').addEventListener('click',()=>{if(exTimer){clearInterval(exTimer);exerciseActive=false;} onExerciseComplete();});
@@ -212,32 +231,39 @@ function startRestCountdown(){
   let left=30; $('#rest-timer').textContent=left+'s'; restActive=true;
   $('#skipRest').onclick=skipRestHandler; $('#skipRestRed').onclick=skipRestHandler;
   if(restTimer) clearInterval(restTimer);
-  restTimer=setInterval(()=>{if(!restActive) return; left--; $('#rest-timer').textContent=left+'s'; if(left<=0){clearInterval(restTimer);restActive=false; $('#rest-area').style.display='none'; goNextExercise();}},1000);
+  restTimer=setInterval(()=>{if(!restActive) return; left--; $('#rest-timer').textContent=left+'s'; if(left<=0){clearInterval(restTimer);restActive=false; $('#rest-area').style.display='none'; nextExercise();}},1000);
 }
-function skipRestHandler(){restActive=false; if(restTimer) clearInterval(restTimer); $('#rest-area').style.display='none'; goNextExercise();}
-function goNextExercise(){if(currentIndex<EXERCISES.length-1){loadExercise(currentIndex+1);}else{setActiveTab('progress');}}
+function skipRestHandler(){if(restTimer) clearInterval(restTimer);restActive=false; $('#rest-area').style.display='none'; nextExercise();}
+function nextExercise(){if(currentIndex<EXERCISES.length-1) loadExercise(currentIndex+1); else alert('All done for today!');}
+loadExercise();
 
-// ================= TIMELINE =================
+// ================= PROGRESS =================
 function renderTimeline(){
-  const list=loadJSON(LS_KEYS.LOGS,[]); const container=$('#timelineList'); container.innerHTML='';
-  if(list.length===0){container.innerHTML='<div class="meta">No entries yet.</div>'; return;}
-  list.forEach(item=>{
-    const div=document.createElement('div'); div.className='timeline-item';
-    const statusDot=item.status==='completed'?'🟢':'🔴';
-    div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
-    <div><strong>${statusDot} ${item.date} — ${item.exerciseName}</strong>
-    <div class="meta">Duration: ${item.duration} s • ${item.synced?'synced':'pending'}</div></div>
-    </div><div style="margin-top:8px">${item.note?item.note:'<span class="meta">No note</span>'}</div>`;
+  const logs=loadJSON(LS_KEYS.LOGS,[]);
+  const container=$('#timelineList'); container.innerHTML='';
+  if(logs.length===0){container.textContent='No entries yet.'; return;}
+  logs.forEach(l=>{
+    const div=document.createElement('div'); div.className='card';
+    div.innerHTML=`<strong>${l.exerciseName}</strong> (${l.duration}s) <span class="meta">${l.date} ${l.timestamp.slice(11,19)}</span>${l.synced?' ✅':''}${l.note?'<br>'+l.note:''}`;
     container.appendChild(div);
   });
 }
 
 // ================= SETTINGS =================
-function loadSettingsToUI(){const st=loadJSON(LS_KEYS.SETTINGS,{});$('#apiUrl').value=st.apiUrl||'';$('#apiSecret').value=st.secret||'';$('#beepToggle').value=st.beep||'on';$('#themeToggle').value=st.theme||'dark';$('#syncStatus').textContent='idle';}
-$('#apiUrl,#apiSecret,#beepToggle,#themeToggle').forEach(el=>el.addEventListener('change',()=>{const st=loadJSON(LS_KEYS.SETTINGS,{});st.apiUrl=$('#apiUrl').value.trim();st.secret=$('#apiSecret').value.trim();st.beep=$('#beepToggle').value;st.theme=$('#themeToggle').value;saveJSON(LS_KEYS.SETTINGS,st);}));
+function loadSettingsToUI(){
+  const st=loadJSON(LS_KEYS.SETTINGS,{});
+  $('#apiUrl').value=st.apiUrl||''; $('#apiSecret').value=st.secret||''; $('#beepToggle').value=st.beep||'on'; $('#themeToggle').value=st.theme||'dark';
+}
+$('#apiUrl,#apiSecret,#beepToggle,#themeToggle').addEventListener('change',()=>{saveSettingsFromUI();});
+function saveSettingsFromUI(){
+  const st={apiUrl:$('#apiUrl').value,secret:$('#apiSecret').value,beep:$('#beepToggle').value,theme:$('#themeToggle').value};
+  saveJSON(LS_KEYS.SETTINGS,st);
+}
 
-// ================= INIT =================
-setTimeout(()=>{loadExercise(0); renderTimeline(); tryAutoSync();},300);
+// Clear and Export
+$('#clearData').onclick=()=>{if(confirm('Erase all local data?')){localStorage.clear(); location.reload();}};
+$('#exportData').onclick=()=>{const logs=loadJSON(LS_KEYS.LOGS,[]); const csv=logs.map(l=>[l.date,l.timestamp,l.exerciseName,l.duration,l.status,l.note].join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='jn_logs.csv'; a.click();};
+
 </script>
 </body>
 </html>
