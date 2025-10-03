@@ -6,36 +6,36 @@
 <title>JasoNowitzki Daily Knee Routine</title>
 <link rel="manifest" href="manifest.json" />
 <style>
-  :root{
-    --bg:#0d1117; --card:#10151b; --neon-blue:#00bfff; --neon-green:#39ff14; --neon-red:#ff3b3b;
-    --muted:#9aa6b2;
-  }
-  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,var(--bg) 0%,#07121a 100%);color:#e6eef3}
-  .app{max-width:720px;margin:0 auto;padding:12px;display:flex;flex-direction:column;min-height:100vh}
-  header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-  .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(180deg,var(--neon-blue),#00d4ff);display:flex;align-items:center;justify-content:center;font-weight:800;color:#041617}
-  h1{margin:0;font-size:1.05rem;color:var(--neon-blue)}
-  .lead{color:var(--muted);font-size:.92rem;margin-top:4px}
-  .card{background:linear-gradient(180deg,var(--card),#0b1216);border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
-  .tabs{display:flex;gap:6px;position:fixed;left:0;right:0;bottom:10px;max-width:720px;margin:auto;padding:8px;background:transparent;justify-content:space-around}
-  .tab-btn{flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.03);color:var(--muted);font-weight:700}
-  .tab-btn.active{background:linear-gradient(90deg,var(--neon-blue),var(--neon-green));color:#011;box-shadow:0 8px 30px rgba(0,191,255,0.12)}
-  .panel{display:none;flex:1;min-height:60vh;margin-bottom:70px}
-  .panel.active{display:block}
-  iframe{width:100%;height:220px;border-radius:10px;border:0;background:#000}
-  .instr{margin-top:8px;color:var(--muted)}
-  .timer{font-size:2rem;margin:12px 0;color:var(--neon-green);font-weight:800;text-shadow:0 0 10px rgba(57,255,20,0.12)}
-  .btn{padding:10px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-  .btn.blue{background:var(--neon-blue);color:#031;box-shadow:0 8px 28px rgba(0,191,255,0.12)}
-  .btn.red{background:var(--neon-red);color:#201010;box-shadow:0 8px 28px rgba(255,59,59,0.12)}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .row{display:flex;gap:8px;margin-top:10px}
-  .timeline-item{display:flex;flex-direction:column;padding:8px;border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,0.02)}
-  .meta{color:var(--muted);font-size:.9rem}
-  .settings-row{display:flex;flex-direction:column;gap:8px}
-  .small-input{padding:8px;border-radius:8px;border:0;background:#0b1114;color:#e6eef3}
-  footer.note{color:var(--muted);font-size:.86rem;margin-top:10px;text-align:center}
-  @media(min-width:720px){iframe{height:360px}}
+:root{
+  --bg:#0d1117; --card:#10151b; --neon-blue:#00bfff; --neon-green:#39ff14; --neon-red:#ff3b3b;
+  --muted:#9aa6b2;
+}
+html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,var(--bg) 0%,#07121a 100%);color:#e6eef3}
+.app{max-width:720px;margin:0 auto;padding:12px;display:flex;flex-direction:column;min-height:100vh}
+header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(180deg,var(--neon-blue),#00d4ff);display:flex;align-items:center;justify-content:center;font-weight:800;color:#041617}
+h1{margin:0;font-size:1.05rem;color:var(--neon-blue)}
+.lead{color:var(--muted);font-size:.92rem;margin-top:4px}
+.card{background:linear-gradient(180deg,var(--card),#0b1216);border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+.tabs{display:flex;gap:6px;position:fixed;left:0;right:0;bottom:10px;max-width:720px;margin:auto;padding:8px;background:transparent;justify-content:space-around}
+.tab-btn{flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.03);color:var(--muted);font-weight:700}
+.tab-btn.active{background:linear-gradient(90deg,var(--neon-blue),var(--neon-green));color:#011;box-shadow:0 8px 30px rgba(0,191,255,0.12)}
+.panel{display:none;flex:1;min-height:60vh;margin-bottom:70px}
+.panel.active{display:block}
+iframe{width:100%;height:220px;border-radius:10px;border:0;background:#000}
+.instr{margin-top:8px;color:var(--muted)}
+.timer{font-size:2rem;margin:12px 0;color:var(--neon-green);font-weight:800;text-shadow:0 0 10px rgba(57,255,20,0.12)}
+.btn{padding:10px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+.btn.blue{background:var(--neon-blue);color:#031;box-shadow:0 8px 28px rgba(0,191,255,0.12)}
+.btn.red{background:var(--neon-red);color:#201010;box-shadow:0 8px 28px rgba(255,59,59,0.12)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.row{display:flex;gap:8px;margin-top:10px}
+.timeline-item{display:flex;flex-direction:column;padding:8px;border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,0.02)}
+.meta{color:var(--muted);font-size:.9rem}
+.settings-row{display:flex;flex-direction:column;gap:8px}
+.small-input{padding:8px;border-radius:8px;border:0;background:#0b1114;color:#e6eef3}
+footer.note{color:var(--muted);font-size:.86rem;margin-top:10px;text-align:center}
+@media(min-width:720px){iframe{height:360px}}
 </style>
 </head>
 <body>
@@ -55,11 +55,9 @@
         <strong id="ex-name">Wall Sit</strong>
         <div id="ex-count" class="meta">1/1</div>
       </div>
-
       <iframe id="ex-video" src=""></iframe>
       <div class="instr" id="ex-instr">Instruction</div>
       <div class="timer" id="ex-timer">Ready</div>
-
       <div class="row">
         <button class="btn blue" id="startBtn">Start</button>
         <button class="btn ghost" id="markBtn">Mark Done</button>
@@ -113,6 +111,7 @@
   </div>
 
   <footer style="height:78px"></footer>
+
   <!-- bottom tabs -->
   <div class="tabs">
     <button class="tab-btn active" id="tabWorkout">🏋️ Workout</button>
@@ -122,94 +121,172 @@
 </div>
 
 <script>
-/* =========================
-   App Data & Config
-========================= */
+/* ========= Full JavaScript included here ========= */
+const EXERCISES=[{name:'Wall Sit',id:'cWTZ8Am1Ee0',instr:'Back flat against wall, knees at ~90°. Keep knees from collapsing inward.',hold:45},{name:'Glute Bridge',id:'tZKt9S_xFDA',instr:'Drive through heels and squeeze glutes at top.',hold:40},{name:'Straight Leg Raise',id:'MGLFUBvbymI',instr:'Keep thigh pressed to the floor. Lift slowly.',hold:40},{name:'Clamshell',id:'DAAjOdwZdks',instr:'Keep feet touching, lift the top knee without rotating pelvis.',hold:40},{name:'Mini Squat',id:'XNe_Kgw6860',instr:'Push hips back slightly, knees track over toes.',hold:40},{name:'Hip Abduction',id:'-t7fuZ0KhDA',instr:'Lift leg with control, avoid rotating your torso.',hold:40},{name:'Calf Raises',id:'YMmgqO8Jo-k',instr:'Rise fully onto toes, lower slowly.',hold:40},{name:'Single-Leg Balance',id:'MzgmUDGRQC0',instr:'Stand tall, soft knee, focus on a fixed point.',hold:30}];
+const LS_KEYS={LOGS:'jn_logs',QUEUE:'jn_queue',SETTINGS:'jn_settings'};
+const $=sel=>document.querySelector(sel);
+function uid(){return 'id_'+Date.now()+'_'+Math.floor(Math.random()*10000);}
+function nowISO(){return(new Date()).toISOString();}
+function todayDate(){return(new Date()).toISOString().slice(0,10);}
+function loadJSON(k,fallback){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fallback;}catch(e){return fallback;}}
+function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v));}
+if(!loadJSON(LS_KEYS.LOGS,null)) saveJSON(LS_KEYS.LOGS,[]);
+if(!loadJSON(LS_KEYS.QUEUE,null)) saveJSON(LS_KEYS.QUEUE,[]);
+if(!loadJSON(LS_KEYS.SETTINGS,null)) saveJSON(LS_KEYS.SETTINGS,{apiUrl:'',secret:'',beep:'on',theme:'dark'});
 
-const EXERCISES = [
-  { name:'Wall Sit', id:'cWTZ8Am1Ee0', instr:'Back flat against wall, knees at ~90°. Keep knees from collapsing inward.', hold:45 },
-  { name:'Glute Bridge', id:'tZKt9S_xFDA', instr:'Drive through heels and squeeze glutes at top.', hold:40 },
-  { name:'Straight Leg Raise', id:'MGLFUBvbymI', instr:'Keep thigh pressed to the floor. Lift slowly.', hold:40 },
-  { name:'Clamshell', id:'DAAjOdwZdks', instr:'Keep feet touching, lift the top knee without rotating pelvis.', hold:40 },
-  { name:'Mini Squat', id:'XNe_Kgw6860', instr:'Push hips back slightly, knees track over toes.', hold:40 },
-  { name:'Hip Abduction', id:'-t7fuZ0KhDA', instr:'Lift leg with control, avoid rotating your torso.', hold:40 },
-  { name:'Calf Raises', id:'YMmgqO8Jo-k', instr:'Rise fully onto toes, lower slowly.', hold:40 },
-  { name:'Single-Leg Balance', id:'MzgmUDGRQC0', instr:'Stand tall, soft knee, focus on a fixed point.', hold:30 }
-];
+/* ==== UI Tabs ==== */
+const panels={workout:$('#panel-workout'),progress:$('#panel-progress'),settings:$('#panel-settings')};
+function setActiveTab(tab){
+  Object.values(panels).forEach(p=>p.classList.remove('active'));
+  $('#tabWorkout').classList.remove('active'); $('#tabProgress').classList.remove('active'); $('#tabSettings').classList.remove('active');
+  if(tab==='workout'){panels.workout.classList.add('active'); $('#tabWorkout').classList.add('active');}
+  if(tab==='progress'){panels.progress.classList.add('active'); $('#tabProgress').classList.add('active'); renderTimeline();}
+  if(tab==='settings'){panels.settings.classList.add('active'); $('#tabSettings').classList.add('active'); loadSettingsToUI();}
+}
+$('#tabWorkout').addEventListener('click',()=>setActiveTab('workout'));
+$('#tabProgress').addEventListener('click',()=>setActiveTab('progress'));
+$('#tabSettings').addEventListener('click',()=>setActiveTab('settings'));
 
-const LS_KEYS = {
-  LOGS: 'jn_logs',
-  QUEUE: 'jn_queue',
-  SETTINGS: 'jn_settings'
-};
-
-const $ = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
-
-function uid(){ return 'id_'+Date.now()+'_'+Math.floor(Math.random()*10000); }
-function nowISO(){ return (new Date()).toISOString(); }
-function todayDate(){ return (new Date()).toISOString().slice(0,10); }
-
-function loadJSON(k, fallback){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):fallback; }catch(e){return fallback;} }
-function saveJSON(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
-
-if(!loadJSON(LS_KEYS.LOGS, null)) saveJSON(LS_KEYS.LOGS, []);
-if(!loadJSON(LS_KEYS.QUEUE, null)) saveJSON(LS_KEYS.QUEUE, []);
-if(!loadJSON(LS_KEYS.SETTINGS, null)) saveJSON(LS_KEYS.SETTINGS, { apiUrl:'', secret:'', beep:'on', theme:'dark' });
-
-/* ====== Sync manager (unified) ====== */
-let syncing=false;
-async function tryAutoSync(){
-  const settings=loadJSON(LS_KEYS.SETTINGS,{});
-  const apiUrl=settings.apiUrl;
-  const secret=settings.secret;
-  const queue=loadJSON(LS_KEYS.QUEUE,[]);
-
-  if(!navigator.onLine){ $('#syncStatus').textContent='offline'; return; }
-  if(!apiUrl || queue.length===0){ $('#syncStatus').textContent='idle'; return; }
-  if(syncing) return;
-  syncing=true;
-  $('#syncStatus').textContent='syncing...';
-
-  let successCount=0;
-  let failCount=0;
-
-  for(const item of queue.slice()){
-    try{
-      const resp=await fetch(apiUrl,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({secret:secret,payload:item})
-      });
-      const result=await resp.json();
-      if(result.status==='success'){
-        successCount++;
-        const logs=loadJSON(LS_KEYS.LOGS,[]);
-        const found=logs.find(l=>l.id===item.id);
-        if(found) found.synced=true;
-        saveJSON(LS_KEYS.LOGS,logs);
-        let q=loadJSON(LS_KEYS.QUEUE,[]);
-        q=q.filter(x=>x.id!==item.id);
-        saveJSON(LS_KEYS.QUEUE,q);
-      } else { failCount++; console.warn('sync failed',result.message); }
-    }catch(err){ failCount++; console.warn('sync error',err); }
+/* ==== Workout & Timers ==== */
+let currentIndex=0,exTimer=null,restTimer=null,exTimeLeft=0,exerciseActive=false,restActive=false;
+function loadExercise(index=0){
+  currentIndex=index;
+  const ex=EXERCISES[currentIndex];
+  $('#ex-name').textContent=ex.name;
+  $('#ex-count').textContent=(currentIndex+1)+' / '+EXERCISES.length;
+  $('#ex-video').src=`https://www.youtube.com/embed/${ex.id}?rel=0&modestbranding=1`;
+  $('#ex-instr').textContent=ex.instr;
+  $('#ex-timer').textContent='Ready';
+  $('#rest-area').style.display='none';
+  startBtnEnable(true);
+}
+function startBtnEnable(enabled){$('#startBtn').disabled=!enabled;$('#markBtn').disabled=!enabled;}
+$('#startBtn').addEventListener('click',()=>startExercise());
+$('#markBtn').addEventListener('click',()=>{if(exTimer){clearInterval(exTimer); exTimer=null; exerciseActive=false;} onExerciseComplete();});
+$('#pauseBtn').addEventListener('click',pauseWorkout);
+$('#prevBtn').addEventListener('click',()=>{if(currentIndex>0)loadExercise(currentIndex-1);});
+$('#nextBtn').addEventListener('click',()=>{if(exTimer){clearInterval(exTimer); exTimer=null; exerciseActive=false; startRestCountdown();}else startRestCountdown();});
+function startExercise(){
+  const ex=EXERCISES[currentIndex]; exTimeLeft=ex.hold;
+  $('#ex-timer').textContent=exTimeLeft+'s'; startBtnEnable(false); exerciseActive=true;
+  if(exTimer) clearInterval(exTimer);
+  exTimer=setInterval(()=>{
+    if(!exerciseActive) return;
+    exTimeLeft--;
+    $('#ex-timer').textContent=exTimeLeft>0? exTimeLeft+'s':'Done!';
+    if(exTimeLeft<=10 && exTimeLeft>0 && getSetting('beep')==='on') tick();
+    if(exTimeLeft<=0){clearInterval(exTimer); exTimer=null; exerciseActive=false; if(getSetting('beep')==='on') finalBeep(); onExerciseComplete();}
+  },1000);
+}
+function pauseWorkout(){exerciseActive=false;restActive=false;if(exTimer){clearInterval(exTimer); exTimer=null;} if(restTimer){clearInterval(restTimer);restTimer=null;} const keep=confirm('Paused — OK to resume, Cancel to restart workout.'); if(keep){const left=parseInt($('#ex-timer').textContent,10); if(!isNaN(left)&&left>0){exTimeLeft=left; startExercise();}} else restartToStartScreen();}
+function onExerciseComplete(){
+  const duration=EXERCISES[currentIndex].hold;
+  const log={id:uid(),timestamp:nowISO(),date:todayDate(),exerciseIndex:currentIndex,exerciseName:EXERCISES[currentIndex].name,duration:duration,status:'completed',note:'',synced:false};
+  const userNote=prompt('Quick note (how did it feel? short):','');
+  if(userNote!==null) log.note=userNote.substring(0,300);
+  const logs=loadJSON(LS_KEYS.LOGS,[]); logs.unshift(log); saveJSON(LS_KEYS.LOGS,logs);
+  const q=loadJSON(LS_KEYS.QUEUE,[]); q.push(log); saveJSON(LS_KEYS.QUEUE,q);
+  tryAutoSync(); startRestCountdown();
+}
+function startRestCountdown(){
+  $('#rest-area').style.display='block';
+  let left=30; $('#rest-timer').textContent=left+'s'; restActive=true;
+  $('#skipRest').onclick=skipRestHandler; $('#skipRestRed').onclick=skipRestHandler;
+  if(restTimer) clearInterval(restTimer);
+  restTimer=setInterval(()=>{
+    if(!restActive) return;
+    left--; $('#rest-timer').textContent=left+'s';
+    if(left<=10 && left>0 && getSetting('beep')==='on') tick();
+    if(left<=0){clearInterval(restTimer);restTimer=null;restActive=false;if(getSetting('beep')==='on') finalBeep(); $('#rest-area').style.display='none'; goNextExercise();}
+  },1000);
+}
+function skipRestHandler(){restActive=false;if(restTimer){clearInterval(restTimer);restTimer=null;}$('#rest-area').style.display='none';goNextExercise();}
+function goNextExercise(){
+  if(currentIndex<EXERCISES.length-1){loadExercise(currentIndex+1);}
+  else{
+    const totalDuration=EXERCISES.reduce((s,e)=>s+e.hold,0);
+    const sessionLog={id:uid(),timestamp:nowISO(),date:todayDate(),exerciseName:'Full Routine',duration:totalDuration,status:'session_complete',note:prompt('Session note (optional):',''),synced:false};
+    const logs=loadJSON(LS_KEYS.LOGS,[]); logs.unshift(sessionLog); saveJSON(LS_KEYS.LOGS,logs);
+    const q=loadJSON(LS_KEYS.QUEUE,[]); q.push(sessionLog); saveJSON(LS_KEYS.QUEUE,q);
+    tryAutoSync(); setActiveTab('progress');
   }
-
-  syncing=false;
-  $('#syncStatus').textContent=`Done. Success: ${successCount}, Fail: ${failCount}`;
-  renderTimeline();
-  if(failCount>0) alert('Some items failed to sync. Check console.');
 }
 
+/* ==== Timeline ==== */
+function renderTimeline(){
+  const list=loadJSON(LS_KEYS.LOGS,[]);
+  const container=$('#timelineList'); container.innerHTML='';
+  if(list.length===0){container.innerHTML='<div class="meta">No entries yet. Finish a workout to log progress.</div>';return;}
+  list.forEach(item=>{
+    const div=document.createElement('div'); div.className='timeline-item';
+    const statusDot=item.status==='completed'||item.status==='session_complete'?'🟢':'🔴';
+    div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
+      <div><strong>${statusDot} ${item.date} — ${item.exerciseName}</strong>
+      <div class="meta">Duration: ${item.duration} s • ${item.synced?'synced':'pending'}</div></div>
+      <div><button class="btn ghost" data-id="${item.id}" onclick="editNote('${item.id}')">Edit</button></div></div>
+      <div style="margin-top:8px">${item.note?item.note:'<span class="meta">No note</span>'}</div>`;
+    container.appendChild(div);
+  });
+}
+window.editNote=function(id){
+  const logs=loadJSON(LS_KEYS.LOGS,[]); const idx=logs.findIndex(x=>x.id===id);
+  if(idx===-1) return alert('Not found');
+  const newNote=prompt('Edit note:',logs[idx].note||'');
+  if(newNote!==null){logs[idx].note=newNote;logs[idx].synced=false;saveJSON(LS_KEYS.LOGS,logs);
+  const q=loadJSON(LS_KEYS.QUEUE,[]); q.push(logs[idx]); saveJSON(LS_KEYS.QUEUE,q); renderTimeline(); tryAutoSync();}
+}
+
+/* ==== Audio ==== */
+const AudioCtx = window.AudioContext || window.webkitAudioContext; const audioCtx = AudioCtx?new AudioCtx():null;
+function tick(){if(!audioCtx)return;const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.type='sine';o.frequency.value=900;g.gain.value=0.06;o.connect(g);g.connect(audioCtx.destination);o.start();setTimeout(()=>o.stop(),100);}
+function finalBeep(){if(!audioCtx)return;const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.type='sine';o.frequency.value=1200;g.gain.value=0.12;o.connect(g);g.connect(audioCtx.destination);o.start();setTimeout(()=>o.stop(),300);}
+
+/* ==== Settings ==== */
+function loadSettingsToUI(){const st=loadJSON(LS_KEYS.SETTINGS,{});$('#apiUrl').value=st.apiUrl||'';$('#apiSecret').value=st.secret||'';$('#beepToggle').value=st.beep||'on';$('#themeToggle').value=st.theme||'dark';$('#syncStatus').textContent='idle';}
+function saveSettingsFromUI(){const st=loadJSON(LS_KEYS.SETTINGS,{});st.apiUrl=$('#apiUrl').value.trim();st.secret=$('#apiSecret').value.trim();st.beep=$('#beepToggle').value;st.theme=$('#themeToggle').value;saveJSON(LS_KEYS.SETTINGS,st);alert('Settings saved');}
+$('#apiUrl').addEventListener('change',saveSettingsFromUI);
+$('#apiSecret').addEventListener('change',saveSettingsFromUI);
+$('#beepToggle').addEventListener('change',saveSettingsFromUI);
+$('#themeToggle').addEventListener('change',saveSettingsFromUI);
+function getSetting(k){const st=loadJSON(LS_KEYS.SETTINGS,{});if(k==='beep')return st.beep||'on';if(k==='apiUrl')return st.apiUrl||'';if(k==='secret')return st.secret||'';return null;}
+
+/* ==== Sync ==== */
+let syncing=false;
+async function tryAutoSync(){
+  const st=loadJSON(LS_KEYS.SETTINGS,{});
+  const apiUrl=st.apiUrl; const secret=st.secret;
+  const queue=loadJSON(LS_KEYS.QUEUE,[]);
+  if(!navigator.onLine || !apiUrl || queue.length===0 || syncing) return;
+  syncing=true; $('#syncStatus').textContent='syncing...';
+  for(const item of queue.slice()){
+    try{
+      const resp=await fetch(apiUrl,{method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({secret:secret,payload:item})});
+      if(resp.ok){const logs=loadJSON(LS_KEYS.LOGS,[]); const found=logs.find(l=>l.id===item.id); if(found) found.synced=true; saveJSON(LS_KEYS.LOGS,logs); let q=loadJSON(LS_KEYS.QUEUE,[]); q=q.filter(x=>x.id!==item.id); saveJSON(LS_KEYS.QUEUE,q);}
+    }catch(err){ break; }
+  }
+  syncing=false; $('#syncStatus').textContent='idle'; renderTimeline();
+}
 window.addEventListener('online',tryAutoSync);
-$('#syncNowBtn').addEventListener('click',tryAutoSync);
+$('#syncNowBtn').addEventListener('click',async()=>{
+  $('#syncStatus').textContent='syncing...';
+  const st=loadJSON(LS_KEYS.SETTINGS,{});const apiUrl=st.apiUrl;const secret=st.secret;
+  const queue=loadJSON(LS_KEYS.QUEUE,[]);
+  if(!navigator.onLine){$('#syncStatus').textContent='offline'; alert('You are offline.');return;}
+  if(!apiUrl||queue.length===0){$('#syncStatus').textContent='idle';alert('Nothing to sync or API URL missing.');return;}
+  let successCount=0,failCount=0;
+  for(const item of queue.slice()){
+    try{const resp=await fetch(apiUrl,{method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({secret:secret,payload:item})});
+      const result=await resp.json(); if(result.status==='success'){successCount++; const logs=loadJSON(LS_KEYS.LOGS,[]); const found=logs.find(l=>l.id===item.id); if(found) found.synced=true; saveJSON(LS_KEYS.LOGS,logs); let q=loadJSON(LS_KEYS.QUEUE,[]); q=q.filter(x=>x.id!==item.id); saveJSON(LS_KEYS.QUEUE,q);} else{failCount++; console.warn('sync failed',result.message);}
+    }catch(err){failCount++;console.warn('sync error',err);}
+  }
+  $('#syncStatus').textContent=`Done. Success: ${successCount}, Fail: ${failCount}`; renderTimeline();
+  if(failCount>0) alert('Some items failed to sync. Check console.');
+});
 
-/* =========================
-   UI Tabs & workout logic unchanged
-========================= */
-
-// ...keep the rest of your script exactly as is: workout timers, progress, settings, audio, init, etc.
-
+/* ==== Init ==== */
+setTimeout(()=>{loadExercise(0); renderTimeline(); tryAutoSync();},300);
+window.tryAutoSync=tryAutoSync;
+function restartToStartScreen(){loadExercise(0);}
 </script>
 </body>
 </html>
