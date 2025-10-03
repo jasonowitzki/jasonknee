@@ -30,7 +30,7 @@ h1{margin:0;font-size:1.05rem;color:var(--neon-blue);}
 .settings-row{display:flex;flex-direction:column;gap:8px;}
 .small-input{padding:8px;border-radius:8px;border:0;background:#0b1114;color:#e6eef3;}
 footer.note{color:var(--muted);font-size:.86rem;margin-top:10px;text-align:center;}
-#ex-video{width:100%;height:220px;border-radius:10px;border:0;background:#000;}
+#ex-video{width:100%;height:220px;border-radius:10px;border:0;background:#000;object-fit:contain;}
 @media(min-width:720px){#ex-video{height:360px;}}
 </style>
 </head>
@@ -50,7 +50,7 @@ footer.note{color:var(--muted);font-size:.86rem;margin-top:10px;text-align:cente
       <strong id="ex-name">Wall Sit</strong>
       <div id="ex-count" class="meta">1/1</div>
     </div>
-    <iframe id="ex-video" src=""></iframe>
+    <img id="ex-video" src="" alt="Exercise GIF">
     <div class="meta" id="ex-instr">Instruction</div>
     <div class="timer" id="ex-timer">Ready</div>
     <div class="row">
@@ -113,14 +113,18 @@ footer.note{color:var(--muted);font-size:.86rem;margin-top:10px;text-align:cente
 <script>
 // ================= DATA =================
 const EXERCISES=[
-{name:'Wall Sit',id:'cWTZ8Am1Ee0',instr:'Back flat, knees ~90°.',hold:10},
-{name:'Glute Bridge',id:'tZKt9S_xFDA',instr:'Drive through heels.',hold:8},
-{name:'Straight Leg Raise',id:'MGLFUBvbymI',instr:'Keep thigh pressed.',hold:8},
-{name:'Clamshell',id:'DAAjOdwZdks',instr:'Keep feet touching.',hold:8},
-{name:'Mini Squat',id:'XNe_Kgw6860',instr:'Push hips back slightly.',hold:8},
-{name:'Hip Abduction',id:'-t7fuZ0KhDA',instr:'Lift leg with control.',hold:8},
-{name:'Calf Raises',id:'YMmgqO8Jo-k',instr:'Rise fully onto toes.',hold:8},
-{name:'Single-Leg Balance',id:'MzgmUDGRQC0',instr:'Stand tall, soft knee.',hold:8}];
+{name:'Wall Sit',gif:'https://media.giphy.com/media/l0HlOvJ7yaacpuSas/giphy.gif',instr:'Back flat, knees ~90°.',hold:10},
+{name:'Glute Bridge',gif:'https://media.giphy.com/media/3o7TKM4k1IuMFfJdU0/giphy.gif',instr:'Drive through heels.',hold:8},
+{name:'Straight Leg Raise',gif:'https://media.giphy.com/media/l41lY2l1tX4KDXB7C/giphy.gif',instr:'Keep thigh pressed.',hold:8},
+{name:'Clamshell',gif:'https://media.giphy.com/media/l0HlXo5s3WItT2GzO/giphy.gif',instr:'Keep feet touching.',hold:8},
+{name:'Mini Squat',gif:'https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif',instr:'Push hips back slightly.',hold:8},
+{name:'Hip Abduction',gif:'https://media.giphy.com/media/3og0IUE6zKocxV6hR6/giphy.gif',instr:'Lift leg with control.',hold:8},
+{name:'Calf Raises',gif:'https://media.giphy.com/media/3o6ZsXxMMLp8nRmZ84/giphy.gif',instr:'Rise fully onto toes.',hold:8},
+{name:'Single-Leg Balance',gif:'https://media.giphy.com/media/l0HlWkE39y5PtD6ze/giphy.gif',instr:'Stand tall, soft knee.',hold:8}
+];
+
+// ...rest of your original JavaScript below (unchanged)
+
 const LS_KEYS={LOGS:'jn_logs',QUEUE:'jn_queue',SETTINGS:'jn_settings'};
 const $=s=>document.querySelector(s);
 function uid(){return 'id_'+Date.now()+'_'+Math.floor(Math.random()*10000);}
@@ -197,7 +201,7 @@ function loadExercise(idx=0){
   currentIndex=idx; const ex=EXERCISES[currentIndex];
   $('#ex-name').textContent=ex.name;
   $('#ex-count').textContent=(currentIndex+1)+'/'+EXERCISES.length;
-  $('#ex-video').src=`https://www.youtube.com/embed/${ex.id}?rel=0&modestbranding=1`;
+  $('#ex-video').src=ex.gif;
   $('#ex-instr').textContent=ex.instr;
   $('#ex-timer').textContent='Ready';
   $('#rest-area').style.display='none';
@@ -216,8 +220,7 @@ $('#nextBtn').addEventListener('click',()=>{if(exTimer){clearInterval(exTimer);e
 $('#pauseBtn').addEventListener('click',pauseWorkout);
 function pauseWorkout(){
   exerciseActive=false; restActive=false; if(exTimer) clearInterval(exTimer); if(restTimer) clearInterval(restTimer);
-  const keep=confirm('Paused — OK resume, Cancel restart.'); if(keep){const left=parseInt($('#ex-timer').textContent,10); if(!isNaN(left)&&left>0){exTimeLeft=left; startExercise();}} else{loadExercise(0);}
-}
+  const keep=confirm('Paused — OK resume, Cancel restart.'); if(keep){const left=parseInt($('#ex-timer').textContent,10); if(!isNaN(left)&&left>0){exTimeLeft=left; startExercise();}} else{loadExercise(0);}}
 function onExerciseComplete(){
   const duration=EXERCISES[currentIndex].hold;
   const log={id:uid(),timestamp:nowISO(),date:todayDate(),exerciseIndex:currentIndex,exerciseName:EXERCISES[currentIndex].name,duration,status:'completed',note:'',synced:false};
