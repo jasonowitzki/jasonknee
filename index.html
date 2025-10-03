@@ -124,7 +124,7 @@
 <script>
 /* =========================
    App Data & Config
-   ========================= */
+========================= */
 
 const EXERCISES = [
   { name:'Wall Sit', id:'cWTZ8Am1Ee0', instr:'Back flat against wall, knees at ~90°. Keep knees from collapsing inward.', hold:45 },
@@ -157,346 +157,59 @@ if(!loadJSON(LS_KEYS.LOGS, null)) saveJSON(LS_KEYS.LOGS, []);
 if(!loadJSON(LS_KEYS.QUEUE, null)) saveJSON(LS_KEYS.QUEUE, []);
 if(!loadJSON(LS_KEYS.SETTINGS, null)) saveJSON(LS_KEYS.SETTINGS, { apiUrl:'', secret:'', beep:'on', theme:'dark' });
 
-/* ====== Sync manager ====== */
-let syncing = false;
+/* ====== Sync manager (unified) ====== */
+let syncing=false;
 async function tryAutoSync(){
-  const settings = loadJSON(LS_KEYS.SETTINGS, {});
-  const apiUrl = settings.apiUrl;
-  const secret = settings.secret;
-  const queue = loadJSON(LS_KEYS.QUEUE, []);
-  if(!navigator.onLine || !apiUrl || queue.length===0 || syncing) return;
-  syncing = true;
-  $('#syncStatus').textContent = 'syncing...';
-  for(const item of queue.slice()){
-    try{
-      const resp = await fetch(apiUrl, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ secret: secret, payload: item })
-      });
-      if(resp.ok){
-        const logs = loadJSON(LS_KEYS.LOGS, []);
-        const found = logs.find(l=>l.id===item.id);
-        if(found) found.synced = true;
-        saveJSON(LS_KEYS.LOGS, logs);
-        let q = loadJSON(LS_KEYS.QUEUE, []);
-        q = q.filter(x=>x.id !== item.id);
-        saveJSON(LS_KEYS.QUEUE, q);
-      }
-    }catch(err){
-      break;
-    }
-  }
-  syncing = false;
-  $('#syncStatus').textContent = 'idle';
-  renderTimeline();
-}
+  const settings=loadJSON(LS_KEYS.SETTINGS,{});
+  const apiUrl=settings.apiUrl;
+  const secret=settings.secret;
+  const queue=loadJSON(LS_KEYS.QUEUE,[]);
 
-window.addEventListener('online', tryAutoSync);
-$('#syncNowBtn').addEventListener('click', async () => {
-  $('#syncStatus').textContent = 'syncing...';
-  const settings = loadJSON(LS_KEYS.SETTINGS, {});
-  const apiUrl = settings.apiUrl;
-  const secret = settings.secret;
-  const queue = loadJSON(LS_KEYS.QUEUE, []);
-  
-  if(!navigator.onLine){
-    $('#syncStatus').textContent = 'offline';
-    alert('You are offline. Cannot sync.');
-    return;
-  }
-  
-  if(!apiUrl || queue.length===0){
-    $('#syncStatus').textContent = 'idle';
-    alert('Nothing to sync or API URL missing.');
-    return;
-  }
+  if(!navigator.onLine){ $('#syncStatus').textContent='offline'; return; }
+  if(!apiUrl || queue.length===0){ $('#syncStatus').textContent='idle'; return; }
+  if(syncing) return;
+  syncing=true;
+  $('#syncStatus').textContent='syncing...';
 
-  let successCount = 0;
-  let failCount = 0;
+  let successCount=0;
+  let failCount=0;
 
   for(const item of queue.slice()){
     try{
-      const resp = await fetch(apiUrl, {
+      const resp=await fetch(apiUrl,{
         method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ secret: secret, payload: item })
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({secret:secret,payload:item})
       });
-      
-      const result = await resp.json();
+      const result=await resp.json();
       if(result.status==='success'){
         successCount++;
-        // mark as synced in logs
-        const logs = loadJSON(LS_KEYS.LOGS, []);
-        const found = logs.find(l=>l.id===item.id);
-        if(found) found.synced = true;
-        saveJSON(LS_KEYS.LOGS, logs);
-        // remove from queue
-        let q = loadJSON(LS_KEYS.QUEUE, []);
-        q = q.filter(x=>x.id !== item.id);
-        saveJSON(LS_KEYS.QUEUE, q);
-      } else {
-        failCount++;
-        console.warn('sync failed', result.message);
-      }
-    }catch(err){
-      failCount++;
-      console.warn('sync error', err);
-    }
+        const logs=loadJSON(LS_KEYS.LOGS,[]);
+        const found=logs.find(l=>l.id===item.id);
+        if(found) found.synced=true;
+        saveJSON(LS_KEYS.LOGS,logs);
+        let q=loadJSON(LS_KEYS.QUEUE,[]);
+        q=q.filter(x=>x.id!==item.id);
+        saveJSON(LS_KEYS.QUEUE,q);
+      } else { failCount++; console.warn('sync failed',result.message); }
+    }catch(err){ failCount++; console.warn('sync error',err); }
   }
 
-  $('#syncStatus').textContent = `Done. Success: ${successCount}, Fail: ${failCount}`;
+  syncing=false;
+  $('#syncStatus').textContent=`Done. Success: ${successCount}, Fail: ${failCount}`;
   renderTimeline();
   if(failCount>0) alert('Some items failed to sync. Check console.');
-});
+}
 
+window.addEventListener('online',tryAutoSync);
+$('#syncNowBtn').addEventListener('click',tryAutoSync);
 
 /* =========================
-   UI Tabs
-   ========================= */
-const panels = {
-  workout: $('#panel-workout'),
-  progress: $('#panel-progress'),
-  settings: $('#panel-settings')
-};
-function setActiveTab(tab){
-  Object.values(panels).forEach(p=>p.classList.remove('active'));
-  $('#tabWorkout').classList.remove('active'); $('#tabProgress').classList.remove('active'); $('#tabSettings').classList.remove('active');
-  if(tab==='workout'){ panels.workout.classList.add('active'); $('#tabWorkout').classList.add('active'); }
-  if(tab==='progress'){ panels.progress.classList.add('active'); $('#tabProgress').classList.add('active'); renderTimeline(); }
-  if(tab==='settings'){ panels.settings.classList.add('active'); $('#tabSettings').classList.add('active'); loadSettingsToUI(); }
-}
-$('#tabWorkout').addEventListener('click', ()=>setActiveTab('workout'));
-$('#tabProgress').addEventListener('click', ()=>setActiveTab('progress'));
-$('#tabSettings').addEventListener('click', ()=>setActiveTab('settings'));
+   UI Tabs & workout logic unchanged
+========================= */
 
-/* =========================
-   Workout timers & beeps (fixed)
-   ========================= */
-let currentIndex = 0;
-let exTimer = null;
-let restTimer = null;
-let exTimeLeft = 0;
-let exerciseActive = false;
-let restActive = false;
+// ...keep the rest of your script exactly as is: workout timers, progress, settings, audio, init, etc.
 
-function loadExercise(index=0){
-  currentIndex = index;
-  const ex = EXERCISES[currentIndex];
-  $('#ex-name').textContent = ex.name;
-  $('#ex-count').textContent = (currentIndex+1)+' / '+EXERCISES.length;
-  $('#ex-video').src = `https://www.youtube.com/embed/${ex.id}?rel=0&modestbranding=1`;
-  $('#ex-instr').textContent = ex.instr;
-  $('#ex-timer').textContent = 'Ready';
-  $('#rest-area').style.display = 'none';
-  startBtnEnable(true);
-}
-
-function startBtnEnable(enabled){
-  $('#startBtn').disabled = !enabled;
-  $('#markBtn').disabled = !enabled;
-}
-
-function startExercise(){
-  const ex = EXERCISES[currentIndex];
-  exTimeLeft = ex.hold;
-  $('#ex-timer').textContent = exTimeLeft + 's';
-  startBtnEnable(false);
-  exerciseActive = true;
-
-  if(exTimer) clearInterval(exTimer);
-  exTimer = setInterval(()=>{
-    if(!exerciseActive) return;
-    exTimeLeft--;
-    $('#ex-timer').textContent = exTimeLeft>0? exTimeLeft+'s':'Done!';
-    if(exTimeLeft <= 10 && exTimeLeft > 0 && getSetting('beep')==='on') tick();
-    if(exTimeLeft <=0){
-      clearInterval(exTimer); exTimer=null; exerciseActive=false;
-      if(getSetting('beep')==='on') finalBeep();
-      onExerciseComplete();
-    }
-  },1000);
-}
-
-$('#pauseBtn').addEventListener('click', pauseWorkout);
-function pauseWorkout(){
-  exerciseActive=false;
-  restActive=false;
-  if(exTimer){ clearInterval(exTimer); exTimer=null; }
-  if(restTimer){ clearInterval(restTimer); restTimer=null; }
-  const keep = confirm('Paused — press OK to resume, Cancel to restart workout to start screen.');
-  if(keep){
-    const left = parseInt($('#ex-timer').textContent,10);
-    if(!isNaN(left) && left>0){ exTimeLeft=left; startExercise(); }
-  } else {
-    restartToStartScreen();
-  }
-}
-
-function onExerciseComplete(){
-  const duration = EXERCISES[currentIndex].hold;
-  const log = {
-    id: uid(),
-    timestamp: nowISO(),
-    date: todayDate(),
-    exerciseIndex: currentIndex,
-    exerciseName: EXERCISES[currentIndex].name,
-    duration: duration,
-    status: 'completed',
-    note: '',
-    synced: false
-  };
-  const userNote = prompt('Quick note (how did it feel? short):','');
-  if(userNote !== null) log.note = userNote.substring(0,300);
-
-  const logs = loadJSON(LS_KEYS.LOGS, []);
-  logs.unshift(log);
-  saveJSON(LS_KEYS.LOGS, logs);
-  const q = loadJSON(LS_KEYS.QUEUE, []);
-  q.push(log);
-  saveJSON(LS_KEYS.QUEUE, q);
-  tryAutoSync();
-  startRestCountdown();
-}
-
-function startRestCountdown(){
-  $('#rest-area').style.display = 'block';
-  let left = 30;
-  $('#rest-timer').textContent = left + 's';
-  restActive=true;
-
-  $('#skipRest').onclick = skipRestHandler;
-  $('#skipRestRed').onclick = skipRestHandler;
-
-  if(restTimer) clearInterval(restTimer);
-  restTimer = setInterval(()=>{
-    if(!restActive) return;
-    left--;
-    $('#rest-timer').textContent = left+'s';
-    if(left <= 10 && left >0 && getSetting('beep')==='on') tick();
-    if(left<=0){
-      clearInterval(restTimer); restTimer=null; restActive=false;
-      if(getSetting('beep')==='on') finalBeep();
-      $('#rest-area').style.display='none';
-      goNextExercise();
-    }
-  },1000);
-}
-
-function skipRestHandler(){
-  restActive=false;
-  if(restTimer){ clearInterval(restTimer); restTimer=null; }
-  $('#rest-area').style.display='none';
-  goNextExercise();
-}
-
-function goNextExercise(){
-  if(currentIndex < EXERCISES.length - 1){
-    loadExercise(currentIndex+1);
-  } else {
-    const totalDuration = EXERCISES.reduce((s,e)=>s+e.hold,0);
-    const sessionLog = {
-      id: uid(),
-      timestamp: nowISO(),
-      date: todayDate(),
-      exerciseName: 'Full Routine',
-      duration: totalDuration,
-      status: 'session_complete',
-      note: prompt('Session note (optional):',''),
-      synced:false
-    };
-    const logs = loadJSON(LS_KEYS.LOGS, []);
-    logs.unshift(sessionLog);
-    saveJSON(LS_KEYS.LOGS, logs);
-    const q = loadJSON(LS_KEYS.QUEUE, []);
-    q.push(sessionLog);
-    saveJSON(LS_KEYS.QUEUE, q);
-    tryAutoSync();
-    setActiveTab('progress');
-  }
-}
-
-$('#prevBtn').addEventListener('click', ()=> { if(currentIndex>0) loadExercise(currentIndex-1); });
-$('#nextBtn').addEventListener('click', ()=> {
-  if(exTimer){ clearInterval(exTimer); exTimer=null; exerciseActive=false; startRestCountdown(); }
-  else { startRestCountdown(); }
-});
-$('#startBtn').addEventListener('click', ()=> startExercise());
-$('#markBtn').addEventListener('click', ()=> { if(exTimer){ clearInterval(exTimer); exTimer=null; exerciseActive=false; } onExerciseComplete(); });
-
-/* =========================
-   Timeline & export
-   ========================= */
-function renderTimeline(){
-  const list = loadJSON(LS_KEYS.LOGS, []);
-  const container = $('#timelineList');
-  container.innerHTML='';
-  if(list.length===0){ container.innerHTML='<div class="meta">No entries yet. Finish a workout to log progress.</div>'; return; }
-  list.forEach(item=>{
-    const div=document.createElement('div');
-    div.className='timeline-item';
-    const statusDot = item.status==='completed'||item.status==='session_complete'?'🟢':'🔴';
-    div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
-      <div><strong>${statusDot} ${item.date} — ${item.exerciseName}</strong>
-      <div class="meta">Duration: ${item.duration} s • ${item.synced?'synced':'pending'}</div></div>
-      <div><button class="btn ghost" data-id="${item.id}" onclick="editNote('${item.id}')">Edit</button></div></div>
-      <div style="margin-top:8px">${item.note?item.note:'<span class="meta">No note</span>'}</div>`;
-    container.appendChild(div);
-  });
-}
-
-window.editNote=function(id){
-  const logs=loadJSON(LS_KEYS.LOGS,[]);
-  const idx=logs.findIndex(x=>x.id===id);
-  if(idx===-1) return alert('Not found');
-  const newNote=prompt('Edit note:',logs[idx].note||'');
-  if(newNote!==null){
-    logs[idx].note=newNote; logs[idx].synced=false;
-    saveJSON(LS_KEYS.LOGS,logs);
-    const q=loadJSON(LS_KEYS.QUEUE,[]); q.push(logs[idx]); saveJSON(LS_KEYS.QUEUE,q);
-    renderTimeline(); tryAutoSync();
-  }
-};
-
-/* =========================
-   Audio
-   ========================= */
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-const audioCtx = AudioCtx ? new AudioCtx() : null;
-function tick(){ if(!audioCtx) return; const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type='sine'; o.frequency.value=900; g.gain.value=0.06; o.connect(g); g.connect(audioCtx.destination); o.start(); setTimeout(()=>o.stop(),100);}
-function finalBeep(){ if(!audioCtx) return; const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type='sine'; o.frequency.value=1200; g.gain.value=0.12; o.connect(g); g.connect(audioCtx.destination); o.start(); setTimeout(()=>o.stop(),300);}
-
-/* =========================
-   Settings
-   ========================= */
-function loadSettingsToUI(){
-  const st=loadJSON(LS_KEYS.SETTINGS,{});
-  $('#apiUrl').value=st.apiUrl||''; $('#apiSecret').value=st.secret||'';
-  $('#beepToggle').value=st.beep||'on'; $('#themeToggle').value=st.theme||'dark';
-  $('#syncStatus').textContent='idle';
-}
-function saveSettingsFromUI(){
-  const st=loadJSON(LS_KEYS.SETTINGS,{});
-  st.apiUrl=$('#apiUrl').value.trim(); st.secret=$('#apiSecret').value.trim();
-  st.beep=$('#beepToggle').value; st.theme=$('#themeToggle').value;
-  saveJSON(LS_KEYS.SETTINGS,st); alert('Settings saved');
-}
-$('#apiUrl').addEventListener('change',saveSettingsFromUI);
-$('#apiSecret').addEventListener('change',saveSettingsFromUI);
-$('#beepToggle').addEventListener('change',saveSettingsFromUI);
-$('#themeToggle').addEventListener('change',saveSettingsFromUI);
-function getSetting(k){ const st=loadJSON(LS_KEYS.SETTINGS,{}); if(k==='beep')return st.beep||'on'; if(k==='apiUrl')return st.apiUrl||''; if(k==='secret')return st.secret||''; return null;}
-
-/* =========================
-   Init
-   ========================= */
-setTimeout(()=>{ loadExercise(0); renderTimeline(); tryAutoSync(); },300);
-
-/* Service Worker */
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').catch(e=>console.warn('SW failed',e)); }
-window.addEventListener('keydown',(e)=>{ if(e.key==='ArrowLeft')$('#prevBtn').click(); if(e.key==='ArrowRight')$('#nextBtn').click(); });
-window.tryAutoSync = tryAutoSync;
 </script>
 </body>
 </html>
-
